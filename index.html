@@ -2,15 +2,130 @@
 <html>
 <head>
 	<meta charset="utf-8">
-	<title>Task 5</title>
+	<title>Task 7</title>
 	<link type="text/css" rel="stylesheet" href="css/reset.css"/>
 	<link type="text/css" rel="stylesheet" href="css/main.css"/>
 	<script>
-		
+		let selectFigureId = -1;
+		let totalFigures = 0;
+		let selectedFigure = -1;
+		function randomInteger(min, max) {
+		  let rand = min + Math.random() * (max + 1 - min);
+		  return Math.floor(rand);
+		}
+		function selectFigure(e){
+			let id = e.path[0].getAttribute("id");
+			if(selectedFigure == id)
+			{
+				let figure = document.getElementById(selectedFigure);
+				figure.parentNode.removeChild(figure);
+				selectedFigure = -1;
+				return;
+			}
+			if(selectedFigure != -1)
+			{
+				let figure = document.getElementById(selectedFigure);
+				switch(figure.className)
+				{
+					case 'square':
+						figure.style.backgroundColor = "rgb(255,0,0)";
+						break;
+					case 'triangle':
+						let string = figure.style.borderBottom;
+						let value = string.split(' ')[0];
+						figure.style.borderBottom = ""+value + " solid rgb(0,0,255)";
+						break;
+					case 'circle':
+						figure.style.backgroundColor = "rgb(0,255,0)";
+						break;
+				}
+			}
+			let figure = document.getElementById(id);
+			switch(figure.className)
+			{
+				case 'triangle':
+					let string = figure.style.borderBottom;
+					let value = string.split(' ')[0];
+					figure.style.borderBottom = ""+ value + " solid rgb(255,255,0)";
+					break;
+				default:
+					figure.style.backgroundColor = "rgb(255,255,0)";
+					break;
+			}
+			selectedFigure = id;
+		}
+		function draw(figure){
+			let value = document.getElementById("value").value;
+			if(isNaN(value))
+			{
+				alert("Введеное значение не является числом");
+				return;
+			}
+			if(value=="") 
+			{
+				alert("Введеное значение не является числом");
+				return;
+			}
+			console.log(value);
+			let width = document.getElementsByClassName("figures")[0].clientWidth;
+			let height = document.getElementsByClassName("figures")[0].clientHeight;
+			for(let i = 0; i < value; i++)
+			{
+				totalFigures++;
+				let newWidth = randomInteger(0,width);
+				let newHeight = randomInteger(0,height);
+				let newSize;
+				switch(figure){
+					case 'square':
+						newSize = randomInteger(25,250);
+						if((newWidth + newSize)>width) newWidth -= newSize;
+						break;
+					case 'triangle':
+						newSize = randomInteger(25,200);
+						if((newWidth + newSize)>width) newWidth -= newSize;
+						break;
+					case 'circle':
+						newSize = randomInteger(25,200);
+						if((newWidth + newSize)>width) newWidth -= newSize;
+						break;
+				}
+				let newFigure = document.createElement("div");
+				newFigure.setAttribute("id",totalFigures);
+				newFigure.classList.add(""+figure);
+				newFigure.onclick = selectFigure;
+				newFigure.style.top = ""+newHeight+"px";
+				newFigure.style.left = ""+newWidth+"px";
+				switch(figure){
+					case 'square':
+						newFigure.style.width = ""+newSize+"px";
+						newFigure.style.height = ""+newSize+"px";
+						break;
+					case 'triangle':
+						newFigure.style.borderLeft = ""+newSize/2+"px solid transparent";
+						newFigure.style.borderRight = ""+newSize/2+"px solid transparent";
+						newFigure.style.borderBottom = ""+newSize+"px solid rgb(0,0,255)";
+						break;
+					case 'circle':
+						newFigure.style.width = ""+newSize+"px";
+						newFigure.style.height = ""+newSize+"px";
+						newFigure.style.borderRadius = ""+newSize/2+"px";
+						break;
+				}
+				
+				document.getElementsByClassName("figures")[0].append(newFigure);
+			}
+		}
 	</script>
 </head>	
 
 <body>
-	
+	<div class="main">
+		<input id="value" name="val"/> <br/>
+		<button onclick="draw('square')">Квадрат</button>
+		<button onclick="draw('triangle')">Треугольник</button>
+		<button onclick="draw('circle')">Круг</button>
+	</div>
+	<div class="figures">
+	</div>
 </body>
 </html>
